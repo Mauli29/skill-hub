@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Services – SkillHub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#1e4fc2"/><path d="M10 28L18 12L26 22L30 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="16" r="3" fill="white"/></svg>
+      Skill<span style="color:#ffd700">Hub</span>
+    </a>
+    <div class="navbar-links">
+      <a href="services.html">Find Work</a>
+      <a href="services.html">Find Freelancers</a>
+      <a href="client-dashboard.html">Post a Project</a>
+    </div>
+    <div class="navbar-actions" id="nav-actions"></div>
+    <div class="hamburger"><span></span><span></span><span></span></div>
+  </div>
+  <div class="mobile-nav"></div>
+</nav>
+
+<!-- Page header -->
+<div style="background:linear-gradient(135deg,#1e4fc2,#4472d6);padding:36px 0 28px;color:#fff">
+  <div class="container">
+    <h1 style="font-size:1.8rem;font-weight:800;margin-bottom:16px">Explore Services</h1>
+    <div class="hero-search" style="max-width:500px;margin:0">
+      <input type="text" id="search-input" placeholder="Search services…">
+      <button id="search-btn">Search</button>
+    </div>
+  </div>
+</div>
+
+<div class="container section" style="padding-top:32px">
+  <!-- Categories -->
+  <div class="categories-bar" id="categories-bar">
+    <button class="cat-filter-btn active" data-id="">All</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="search-filter-bar" style="margin-bottom:20px">
+    <select id="sort-select">
+      <option value="newest">Newest First</option>
+      <option value="price-low">Price: Low to High</option>
+      <option value="price-high">Price: High to Low</option>
+      <option value="rating">Top Rated</option>
+    </select>
+    <input type="number" id="min-price" placeholder="Min ₹" style="max-width:100px">
+    <input type="number" id="max-price" placeholder="Max ₹" style="max-width:100px">
+    <button id="apply-filter" class="btn btn-primary btn-sm">Apply</button>
+  </div>
+
+  <!-- Results count -->
+  <p id="results-count" style="color:#6c757d;font-size:.87rem;margin-bottom:16px"></p>
+
+  <!-- Grid -->
+  <div class="services-grid" id="services-grid">
+    <div class="loader-wrapper" style="grid-column:1/-1"><div class="loader"></div></div>
+  </div>
+
+  <!-- Load more -->
+  <div style="text-align:center;margin-top:32px">
+    <button id="load-more-btn" class="btn btn-outline hidden">Load More</button>
+  </div>
+</div>
+
+<script type="module" src="js/services.js"></script>
+</body>
+</html>

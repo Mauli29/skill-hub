@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard – SkillHub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#1e4fc2"/><path d="M10 28L18 12L26 22L30 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="16" r="3" fill="white"/></svg>
+      Skill<span style="color:#ffd700">Hub</span>
+    </a>
+    <div class="navbar-actions" id="nav-actions"></div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sb-avatar">C</div>
+      <div class="sidebar-name" id="sb-name">Loading…</div>
+      <span class="sidebar-role">Client</span>
+    </div>
+    <ul class="sidebar-nav">
+      <li class="active"><a href="#" data-tab="overview"><span class="nav-icon">📊</span> Dashboard</a></li>
+      <li><a href="services.html"><span class="nav-icon">➕</span> Post a Project</a></li>
+      <li><a href="#" data-tab="projects"><span class="nav-icon">📁</span> My Projects</a></li>
+      <li><a href="#" data-tab="freelancers"><span class="nav-icon">👥</span> Hired Freelancers</a></li>
+      <li><a href="#" data-tab="payments"><span class="nav-icon">💳</span> Payments</a></li>
+      <li><a href="messages.html"><span class="nav-icon">💬</span> Messages</a></li>
+      <li class="sidebar-divider"></li>
+      <li><a href="profile.html?self=1"><span class="nav-icon">👤</span> My Profile</a></li>
+      <li><button id="logout-btn"><span class="nav-icon">🚪</span> Logout</button></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <button class="sidebar-toggle-btn" id="sidebar-toggle">☰ Menu</button>
+
+    <!-- Overview -->
+    <div id="tab-overview">
+      <div class="dashboard-header">
+        <div>
+          <h1>Client Dashboard</h1>
+          <p id="welcome-msg">Welcome back!</p>
+        </div>
+        <a href="services.html" class="btn btn-primary">Find Freelancers</a>
+      </div>
+
+      <div class="stat-cards">
+        <div class="stat-card blue">
+          <div class="stat-card-icon">📂</div>
+          <div class="stat-card-label">Open Projects</div>
+          <div class="stat-card-value" id="stat-open">0</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-card-icon">👥</div>
+          <div class="stat-card-label">Hired Freelancers</div>
+          <div class="stat-card-value" id="stat-hired">0</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-label">Total Spent</div>
+          <div class="stat-card-value" id="stat-spent">₹0</div>
+        </div>
+      </div>
+
+      <!-- Open Projects Card (matching UI design) -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Open Projects</h3>
+            <span id="open-badge" style="background:#1e4fc2;color:#fff;border-radius:8px;padding:3px 12px;font-size:.85rem;font-weight:700">0</span>
+          </div>
+          <div id="open-projects-list" style="padding:16px">
+            <div class="loader-wrapper"><div class="loader"></div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Current Projects</h3>
+          </div>
+          <div id="current-projects-list" style="padding:8px 16px">
+            <div class="loader-wrapper"><div class="loader"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Projects -->
+    <div id="tab-projects" class="hidden">
+      <div class="dashboard-header"><h1>My Projects</h1></div>
+      <div class="panel">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Service</th><th>Freelancer</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="projects-body">
+              <tr><td colspan="6" style="text-align:center;color:#6c757d">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hired Freelancers -->
+    <div id="tab-freelancers" class="hidden">
+      <div class="dashboard-header"><h1>Hired Freelancers</h1></div>
+      <div id="hired-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px">
+        <div class="loader-wrapper" style="grid-column:1/-1"><div class="loader"></div></div>
+      </div>
+    </div>
+
+    <!-- Payments -->
+    <div id="tab-payments" class="hidden">
+      <div class="dashboard-header"><h1>Payments</h1></div>
+      <div class="stat-cards">
+        <div class="stat-card orange">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-label">Total Spent</div>
+          <div class="stat-card-value" id="pay-total">₹0</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>Payment History</h3></div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Order</th><th>Service</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="payments-body">
+              <tr><td colspan="5" style="text-align:center;color:#6c757d">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module" src="js/client-dashboard.js"></script>
+</body>
+</html>

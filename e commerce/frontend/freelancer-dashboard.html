@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freelancer Dashboard – SkillHub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#1e4fc2"/><path d="M10 28L18 12L26 22L30 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="16" r="3" fill="white"/></svg>
+      Skill<span style="color:#ffd700">Hub</span>
+    </a>
+    <div class="navbar-actions" id="nav-actions"></div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" id="sb-avatar">F</div>
+      <div class="sidebar-name" id="sb-name">Loading…</div>
+      <span class="sidebar-role">Freelancer</span>
+    </div>
+    <ul class="sidebar-nav">
+      <li class="active"><a href="#" data-tab="overview"><span class="nav-icon">📊</span> Dashboard</a></li>
+      <li><a href="#" data-tab="services"><span class="nav-icon">🛠</span> Add Services</a></li>
+      <li><a href="#" data-tab="orders"><span class="nav-icon">📦</span> Orders</a></li>
+      <li><a href="#" data-tab="earnings"><span class="nav-icon">💰</span> Earnings</a></li>
+      <li><a href="messages.html" ><span class="nav-icon">💬</span> Messages</a></li>
+      <li class="sidebar-divider"></li>
+      <li><a href="profile.html?self=1"><span class="nav-icon">👤</span> My Profile</a></li>
+      <li><button id="logout-btn"><span class="nav-icon">🚪</span> Logout</button></li>
+    </ul>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <button class="sidebar-toggle-btn" id="sidebar-toggle">☰ Menu</button>
+
+    <!-- Overview Tab -->
+    <div id="tab-overview">
+      <div class="dashboard-header">
+        <div>
+          <h1>Freelancer Dashboard</h1>
+          <p id="welcome-msg">Welcome back!</p>
+        </div>
+        <button class="btn btn-primary" onclick="switchTab('services')">+ Add New Service</button>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="stat-cards">
+        <div class="stat-card blue">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-label">Total Earnings</div>
+          <div class="stat-card-value" id="stat-earnings">₹0</div>
+          <div class="stat-card-sub">Completed orders</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-card-icon">⚡</div>
+          <div class="stat-card-label">Active Orders</div>
+          <div class="stat-card-value" id="stat-active">0</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-card-icon">✅</div>
+          <div class="stat-card-label">Completed Projects</div>
+          <div class="stat-card-value" id="stat-completed">0</div>
+        </div>
+        <div class="stat-card purple">
+          <div class="stat-card-icon">🛠</div>
+          <div class="stat-card-label">My Services</div>
+          <div class="stat-card-value" id="stat-services">0</div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Recent Orders</h3>
+          <button class="btn btn-outline btn-sm" onclick="switchTab('orders')">View All</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Client</th><th>Service</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="recent-orders-body">
+              <tr><td colspan="6" style="text-align:center;color:#6c757d">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services Tab -->
+    <div id="tab-services" class="hidden">
+      <div class="dashboard-header">
+        <div><h1>My Services</h1><p>Manage your service listings</p></div>
+      </div>
+
+      <!-- Add Service Form -->
+      <div class="panel" style="margin-bottom:28px">
+        <div class="panel-header"><h3 id="service-form-title">Add New Service</h3></div>
+        <div class="panel-body">
+          <form id="service-form" class="dash-form">
+            <input type="hidden" id="edit-service-id">
+            <div class="dash-form-row">
+              <div class="form-group">
+                <label>Service Title *</label>
+                <input type="text" id="svc-title" class="form-control" placeholder="e.g. I will design a professional logo" required>
+              </div>
+              <div class="form-group">
+                <label>Price (₹) *</label>
+                <input type="number" id="svc-price" class="form-control" placeholder="1500" min="1" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select id="svc-category" class="form-control"><option value="">Select category…</option></select>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="svc-desc" class="form-control" placeholder="Describe your service in detail…"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Service Image</label>
+              <div class="img-upload-box" id="img-box">
+                <input type="file" id="svc-image" accept="image/*">
+                <div id="img-box-text">📷 Click to upload image (JPG, PNG, WebP)</div>
+                <img id="img-preview" class="img-preview hidden" alt="">
+              </div>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button type="submit" class="btn btn-primary" id="svc-submit-btn">Add Service</button>
+              <button type="button" id="svc-cancel-btn" class="btn btn-outline hidden">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Existing services list -->
+      <div class="panel">
+        <div class="panel-header"><h3>Your Listings</h3></div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Title</th><th>Category</th><th>Price</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="my-services-body">
+              <tr><td colspan="6" style="text-align:center;color:#6c757d">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div id="tab-orders" class="hidden">
+      <div class="dashboard-header"><h1>All Orders</h1></div>
+      <div class="panel">
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Client</th><th>Service</th><th>Amount</th><th>Status</th><th>Date</th><th>Update Status</th></tr></thead>
+            <tbody id="all-orders-body">
+              <tr><td colspan="6" style="text-align:center;color:#6c757d">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings Tab -->
+    <div id="tab-earnings" class="hidden">
+      <div class="dashboard-header"><h1>Earnings</h1></div>
+      <div class="stat-cards">
+        <div class="stat-card green">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-label">Total Earned</div>
+          <div class="stat-card-value" id="earn-total">₹0</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-card-icon">📦</div>
+          <div class="stat-card-label">Completed Orders</div>
+          <div class="stat-card-value" id="earn-orders">0</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>Completed Orders (Paid)</h3></div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Service</th><th>Client</th><th>Amount</th><th>Date</th></tr></thead>
+            <tbody id="earnings-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module" src="js/freelancer-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile – SkillHub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#1e4fc2"/><path d="M10 28L18 12L26 22L30 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="16" r="3" fill="white"/></svg>
+      Skill<span style="color:#ffd700">Hub</span>
+    </a>
+    <div class="navbar-actions" id="nav-actions"></div>
+  </div>
+</nav>
+
+<div class="profile-hero"></div>
+
+<div class="container" style="padding-bottom:60px">
+  <div id="profile-content">
+    <div class="loader-wrapper"><div class="loader"></div></div>
+  </div>
+</div>
+
+<script type="module">
+import api from './js/api.js';
+import { renderNavAuth, renderStars, formatPrice, avatarInitials, isLoggedIn, getUser, toast } from './js/auth.js';
+
+const API_IMG = 'http://localhost:8000';
+const params = new URLSearchParams(window.location.search);
+const selfMode = params.has('self');
+const userId = params.get('id');
+
+renderNavAuth();
+
+async function loadProfile() {
+  try {
+    let user;
+    if (selfMode) {
+      if (!isLoggedIn()) { window.location.href = 'login.html'; return; }
+      user = await api.get('/users/me');
+    } else if (userId) {
+      user = await api.get(`/users/${userId}`);
+    } else {
+      document.getElementById('profile-content').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><h3>User not found</h3></div>';
+      return;
+    }
+    document.title = `${user.name} – SkillHub`;
+    const avatarHtml = user.avatar
+      ? `<img src="${API_IMG}${user.avatar}" style="width:100%;height:100%;object-fit:cover">`
+      : `<div class="avatar-placeholder">${avatarInitials(user.name)}</div>`;
+
+    const isSelf = selfMode || getUser()?.id === user.id;
+
+    document.getElementById('profile-content').innerHTML = `
+      <div class="profile-card">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+          <div class="avatar-wrapper">
+            ${avatarHtml}
+          </div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <h1 style="font-size:1.5rem;font-weight:800">${user.name}</h1>
+              <span style="background:#e8f0fe;color:#1e4fc2;padding:3px 12px;border-radius:20px;font-size:.8rem;font-weight:600;text-transform:capitalize">${user.role}</span>
+            </div>
+            <p style="color:#6c757d;margin-top:6px">${user.bio || 'No bio yet'}</p>
+            <p style="font-size:.8rem;color:#6c757d;margin-top:6px">Member since ${new Date(user.created_at).toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</p>
+          </div>
+          <div style="display:flex;gap:10px">
+            ${!isSelf ? `<a href="messages.html?to=${user.id}" class="btn btn-primary">💬 Message</a>` : ''}
+            ${isSelf ? `<button id="edit-profile-btn" class="btn btn-outline">✏️ Edit Profile</button>` : ''}
+            ${isSelf && user.role === 'freelancer' ? `<a href="freelancer-dashboard.html" class="btn btn-primary">Dashboard</a>` : ''}
+            ${isSelf && user.role === 'client' ? `<a href="client-dashboard.html" class="btn btn-primary">Dashboard</a>` : ''}
+          </div>
+        </div>
+      </div>
+
+      ${isSelf ? `
+      <div id="edit-form-section" style="display:none;background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:28px;margin-top:20px">
+        <h3 style="font-weight:700;margin-bottom:16px">Edit Profile</h3>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="edit-name" class="form-control" value="${user.name}">
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea id="edit-bio" class="form-control" rows="3">${user.bio || ''}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Profile Photo</label>
+          <input type="file" id="avatar-file" class="form-control" accept="image/*">
+        </div>
+        <div style="display:flex;gap:10px">
+          <button id="save-profile-btn" class="btn btn-primary">Save Changes</button>
+          <button id="cancel-edit-btn" class="btn btn-outline">Cancel</button>
+        </div>
+      </div>` : ''}
+
+      ${user.role === 'freelancer' ? `
+      <div style="margin-top:32px">
+        <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:20px">Services</h2>
+        <div class="services-grid" id="user-services">
+          <div class="loader-wrapper" style="grid-column:1/-1"><div class="loader"></div></div>
+        </div>
+      </div>` : ''}
+    `;
+
+    if (isSelf) {
+      document.getElementById('edit-profile-btn')?.addEventListener('click', () => {
+        document.getElementById('edit-form-section').style.display = 'block';
+      });
+      document.getElementById('cancel-edit-btn')?.addEventListener('click', () => {
+        document.getElementById('edit-form-section').style.display = 'none';
+      });
+      document.getElementById('save-profile-btn')?.addEventListener('click', async () => {
+        try {
+          await api.put('/users/me', {
+            name: document.getElementById('edit-name').value,
+            bio:  document.getElementById('edit-bio').value,
+          });
+          const avatarFile = document.getElementById('avatar-file').files[0];
+          if (avatarFile) {
+            const form = new FormData();
+            form.append('file', avatarFile);
+            await api.upload('/users/me/avatar', form);
+          }
+          toast('Profile updated!', 'success');
+          setTimeout(() => location.reload(), 800);
+        } catch (e) { toast(e.message, 'error'); }
+      });
+    }
+
+    if (user.role === 'freelancer') {
+      loadUserServices(user.id);
+    }
+  } catch (e) {
+    document.getElementById('profile-content').innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><h3>${e.message}</h3></div>`;
+  }
+}
+
+async function loadUserServices(ownerId) {
+  const grid = document.getElementById('user-services');
+  if (!grid) return;
+  try {
+    const svcs = await api.get(`/services?limit=20`);
+    const mine = svcs.filter(s => s.owner?.id === ownerId);
+    if (!mine.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔧</div><h3>No services yet</h3></div>';
+      return;
+    }
+    grid.innerHTML = mine.map(s => `
+      <a href="service-detail.html?id=${s.id}" class="service-card" style="text-decoration:none;color:inherit">
+        <div class="service-card-img-placeholder">${s.category?.icon || '🔧'}</div>
+        <div class="service-card-body">
+          <div class="service-card-title">${s.title}</div>
+          <div class="service-card-footer">
+            <div class="star-rating">${renderStars(s.rating)}<span style="color:#6c757d;margin-left:4px">${s.rating?.toFixed(1)}</span></div>
+            <div class="service-card-price">${formatPrice(s.price)}</div>
+          </div>
+        </div>
+      </a>`).join('');
+  } catch {}
+}
+
+loadProfile();
+</script>
+</body>
+</html>

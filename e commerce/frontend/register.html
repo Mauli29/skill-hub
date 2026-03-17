@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join SkillHub – Create Account</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="min-height:100vh;display:flex;flex-direction:column">
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#1e4fc2"/><path d="M10 28L18 12L26 22L30 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="16" r="3" fill="white"/></svg>
+      Skill<span style="color:#ffd700">Hub</span>
+    </a>
+    <div class="navbar-actions">
+      <a href="login.html" class="btn btn-outline">Sign In</a>
+    </div>
+  </div>
+</nav>
+
+<main style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px;background:#f8f9fa">
+  <div class="form-card">
+    <h2>Create Your Account</h2>
+    <p>Join thousands of professionals on SkillHub</p>
+
+    <div id="error-msg" class="form-error" style="display:none;background:#fce8e6;padding:10px 14px;border-radius:8px;margin-bottom:16px"></div>
+
+    <div class="form-group">
+      <label>I want to…</label>
+      <div class="role-toggle">
+        <input type="radio" name="role" id="role-client" value="client" checked>
+        <label for="role-client">🛒 Hire Freelancers</label>
+        <input type="radio" name="role" id="role-freelancer" value="freelancer">
+        <label for="role-freelancer">💼 Work as Freelancer</label>
+      </div>
+    </div>
+
+    <form id="register-form">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="name" class="form-control" placeholder="John Doe" required minlength="2">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" class="form-control" placeholder="Min 6 characters" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="confirm-password" class="form-control" placeholder="Re-enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="submit-btn" style="padding:13px">
+        Create Account
+      </button>
+    </form>
+
+    <p style="text-align:center;margin-top:20px;font-size:.9rem;color:#6c757d">
+      Already have an account? <a href="login.html" style="color:#1e4fc2;font-weight:600">Sign In</a>
+    </p>
+  </div>
+</main>
+
+<script type="module">
+import { register, isLoggedIn } from './js/auth.js';
+
+if (isLoggedIn()) window.location.href = 'index.html';
+
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  const err = document.getElementById('error-msg');
+  err.style.display = 'none';
+
+  const name     = document.getElementById('name').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirm  = document.getElementById('confirm-password').value;
+  const role     = document.querySelector('input[name="role"]:checked').value;
+
+  if (password !== confirm) {
+    err.textContent = 'Passwords do not match'; err.style.display = 'block'; return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating account…';
+  try {
+    const user = await register(name, email, password, role);
+    window.location.href = user.role === 'freelancer' ? 'freelancer-dashboard.html' : 'client-dashboard.html';
+  } catch (ex) {
+    err.textContent = ex.message;
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Create Account';
+  }
+});
+</script>
+</body>
+</html>

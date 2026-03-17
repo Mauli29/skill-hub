@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillHub – Find the Perfect Freelancer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Navbar ──────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="10" fill="#1e4fc2"/>
+        <path d="M10 28L18 12L26 22L30 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="30" cy="16" r="3" fill="white"/>
+      </svg>
+      Skill<span style="color:#ffd700">Hub</span>
+    </a>
+    <div class="navbar-links">
+      <a href="services.html">Find Work</a>
+      <a href="services.html">Find Freelancers</a>
+      <a href="client-dashboard.html">Post a Project</a>
+    </div>
+    <div class="navbar-actions" id="nav-actions">
+      <a href="login.html" class="btn btn-outline">Sign In</a>
+      <a href="register.html" class="btn btn-primary">Join</a>
+    </div>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="services.html">Find Work</a>
+    <a href="services.html">Find Freelancers</a>
+    <a href="client-dashboard.html">Post a Project</a>
+    <a href="login.html">Sign In</a>
+    <a href="register.html" class="btn btn-primary" style="display:inline-block">Join</a>
+  </div>
+</nav>
+
+<!-- ── Hero ────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <h1 class="hero-title">Find the <span>Perfect Freelancer</span> for Your Project</h1>
+    <p class="hero-subtitle">Connect with talented professionals from around the world</p>
+    <div class="hero-search">
+      <input type="text" id="hero-search-input" placeholder="What service are you looking for?">
+      <button id="hero-search-btn">Search</button>
+    </div>
+    <div class="hero-categories" id="hero-cats">
+      <button class="hero-cat-btn" data-slug="logo-design">
+        <span class="cat-icon">🎨</span> Logo Design
+      </button>
+      <button class="hero-cat-btn" data-slug="web-development">
+        <span class="cat-icon">💻</span> Web Development
+      </button>
+      <button class="hero-cat-btn" data-slug="content-writing">
+        <span class="cat-icon">✍️</span> Content Writing
+      </button>
+      <button class="hero-cat-btn" data-slug="video-editing">
+        <span class="cat-icon">🎬</span> Video Editing
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ── Featured Freelancers ─────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Top Freelancers</h2>
+    <p class="section-subtitle">Hire verified professionals ready to work on your next project</p>
+    <div class="freelancer-grid" id="freelancer-grid">
+      <!-- populated by JS -->
+      <div class="loader-wrapper" style="grid-column:1/-1"><div class="loader"></div></div>
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <a href="services.html" class="btn btn-outline btn-lg">Browse All Freelancers</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ─────────────────────────────────────── -->
+<section class="hiw-section">
+  <div class="container">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle">Get your project done in 3 simple steps</p>
+    <div class="hiw-steps">
+      <div class="hiw-step">
+        <div class="hiw-icon hiw-icon-1">📋</div>
+        <h3>Post a Project</h3>
+        <p>Describe what you need and set your budget</p>
+      </div>
+      <div class="hiw-arrow">›</div>
+      <div class="hiw-step">
+        <div class="hiw-icon hiw-icon-2">🤝</div>
+        <h3>Hire a Freelancer</h3>
+        <p>Browse profiles, compare ratings, and choose the best fit</p>
+      </div>
+      <div class="hiw-arrow">›</div>
+      <div class="hiw-step">
+        <div class="hiw-icon hiw-icon-3">💳</div>
+        <h3>Pay Securely</h3>
+        <p>Pay only when you're 100% satisfied with the work</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Popular Services ──────────────────────────────────── -->
+<section class="section" style="background:#fff">
+  <div class="container">
+    <h2 class="section-title">Popular Services</h2>
+    <p class="section-subtitle">Explore what our talented freelancers can do for you</p>
+    <div class="services-grid" id="services-grid">
+      <div class="loader-wrapper" style="grid-column:1/-1"><div class="loader"></div></div>
+    </div>
+    <div style="text-align:center;margin-top:32px">
+      <a href="services.html" class="btn btn-primary btn-lg">View All Services</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats Banner ──────────────────────────────────────── -->
+<section style="background:linear-gradient(135deg,#1e4fc2,#4472d6);padding:48px 0;color:#fff">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px;text-align:center">
+      <div><div style="font-size:2.2rem;font-weight:800">10K+</div><div style="opacity:.85">Active Freelancers</div></div>
+      <div><div style="font-size:2.2rem;font-weight:800">25K+</div><div style="opacity:.85">Projects Completed</div></div>
+      <div><div style="font-size:2.2rem;font-weight:800">98%</div><div style="opacity:.85">Satisfaction Rate</div></div>
+      <div><div style="font-size:2.2rem;font-weight:800">50+</div><div style="opacity:.85">Service Categories</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ───────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-logo">SkillHub</div>
+        <p class="footer-desc">The world's largest freelance marketplace. Connect with talented professionals for any job.</p>
+      </div>
+      <div class="footer-col">
+        <h4>For Clients</h4>
+        <a href="services.html">Find Freelancers</a>
+        <a href="client-dashboard.html">Post a Project</a>
+        <a href="#">How to Hire</a>
+      </div>
+      <div class="footer-col">
+        <h4>For Freelancers</h4>
+        <a href="register.html">Join as Freelancer</a>
+        <a href="freelancer-dashboard.html">Dashboard</a>
+        <a href="#">How to Earn</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Contact Us</a>
+        <a href="#">Privacy Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 SkillHub. All rights reserved.</span>
+      <span>Made with ❤️ in India</span>
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="js/home.js"></script>
+</body>
+</html>

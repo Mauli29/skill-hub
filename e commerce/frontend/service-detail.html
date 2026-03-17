@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service – SkillHub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#1e4fc2"/><path d="M10 28L18 12L26 22L30 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="16" r="3" fill="white"/></svg>
+      Skill<span style="color:#ffd700">Hub</span>
+    </a>
+    <div class="navbar-links">
+      <a href="services.html">Browse Services</a>
+    </div>
+    <div class="navbar-actions" id="nav-actions"></div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top:36px;padding-bottom:60px">
+  <div id="detail-content">
+    <div class="loader-wrapper"><div class="loader"></div></div>
+  </div>
+</div>
+
+<script type="module">
+import api from './js/api.js';
+import { renderNavAuth, renderStars, formatPrice, avatarInitials, toast, isLoggedIn } from './js/auth.js';
+import { showPaymentModal, initiatePayment } from './js/payment.js';
+
+const API_IMG = 'http://localhost:8000';
+const serviceId = new URLSearchParams(window.location.search).get('id');
+renderNavAuth();
+
+if (!serviceId) {
+  document.getElementById('detail-content').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><h3>Service not found</h3></div>';
+} else {
+  loadService();
+  loadReviews();
+}
+
+async function loadService() {
+  try {
+    const s = await api.get(`/services/${serviceId}`);
+    document.title = `${s.title} – SkillHub`;
+    const avatarHtml = s.owner?.avatar
+      ? `<img src="${API_IMG}${s.owner.avatar}" style="width:50px;height:50px;border-radius:50%;object-fit:cover">`
+      : `<div style="width:50px;height:50px;border-radius:50%;background:#1e4fc2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem">${avatarInitials(s.owner?.name)}</div>`;
+    const imgHtml = s.image
+      ? `<img src="${API_IMG}${s.image}" alt="${s.title}" style="width:100%;border-radius:12px;max-height:380px;object-fit:cover">`
+      : `<div style="width:100%;height:280px;background:linear-gradient(135deg,#e9ecef,#dee2e6);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:5rem">${s.category?.icon||'🔧'}</div>`;
+
+    document.getElementById('detail-content').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:32px;align-items:start">
+        <!-- Left -->
+        <div>
+          <a href="services.html" style="color:#1e4fc2;font-size:.85rem;font-weight:600">← Back to Services</a>
+          <div style="display:inline-block;margin:12px 0;background:#e8f0fe;color:#1e4fc2;padding:4px 12px;border-radius:20px;font-size:.8rem;font-weight:600">${s.category?.icon||''} ${s.category?.name||'General'}</div>
+          <h1 style="font-size:1.7rem;font-weight:800;margin-bottom:16px;line-height:1.3">${s.title}</h1>
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:8px">${avatarHtml}
+              <div>
+                <div style="font-weight:700">${s.owner?.name}</div>
+                <div style="font-size:.8rem;color:#6c757d">${s.owner?.role}</div>
+              </div>
+            </div>
+            <div style="margin-left:auto">
+              <div class="star-rating">${renderStars(s.rating)}<span style="margin-left:6px;font-weight:700">${s.rating?.toFixed(1)}</span><span style="color:#6c757d;margin-left:4px">(${s.review_count} reviews)</span></div>
+            </div>
+          </div>
+          ${imgHtml}
+          <div style="margin-top:28px">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:12px">About This Service</h3>
+            <p style="line-height:1.8;color:#444">${(s.description || 'No description provided.').replace(/\n/g,'<br>')}</p>
+          </div>
+
+          <!-- Reviews -->
+          <div style="margin-top:40px">
+            <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:16px">Reviews</h3>
+            <div id="reviews-list"><div class="loader-wrapper"><div class="loader"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Right: Sticky Order Card -->
+        <div style="position:sticky;top:80px">
+          <div style="background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.12);overflow:hidden">
+            <div style="background:#1e4fc2;color:#fff;padding:20px 24px">
+              <div style="font-size:.85rem;opacity:.85;margin-bottom:4px">Starting at</div>
+              <div style="font-size:2rem;font-weight:800">${formatPrice(s.price)}</div>
+            </div>
+            <div style="padding:20px 24px">
+              <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;font-size:.88rem">
+                <div style="display:flex;align-items:center;gap:8px;color:#444"><span>✅</span> Professional quality</div>
+                <div style="display:flex;align-items:center;gap:8px;color:#444"><span>⚡</span> Fast delivery</div>
+                <div style="display:flex;align-items:center;gap:8px;color:#444"><span>🔒</span> Secure payment</div>
+              </div>
+              <button id="hire-btn" class="btn btn-green btn-block" style="padding:14px;font-size:1rem;margin-bottom:12px">
+                Hire Now
+              </button>
+              <a href="messages.html?to=${s.owner?.id}" class="btn btn-outline btn-block" style="padding:12px">
+                Contact Seller
+              </a>
+              <a href="profile.html?id=${s.owner?.id}" style="display:block;text-align:center;margin-top:14px;font-size:.85rem;color:#1e4fc2;font-weight:600">
+                View Freelancer Profile
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Hire button
+    document.getElementById('hire-btn').addEventListener('click', async () => {
+      if (!isLoggedIn()) { window.location.href = 'login.html'; return; }
+      try {
+        const order = await api.post('/orders', { service_id: s.id });
+        showPaymentModal(s, order.id, (orderId) => initiatePayment(orderId, () => {
+          window.location.href = 'client-dashboard.html';
+        }));
+      } catch (e) { toast(e.message, 'error'); }
+    });
+  } catch (e) {
+    document.getElementById('detail-content').innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><h3>${e.message}</h3></div>`;
+  }
+}
+
+async function loadReviews() {
+  try {
+    const reviews = await api.get(`/reviews/service/${serviceId}`);
+    const el = document.getElementById('reviews-list');
+    if (!el) return;
+    if (!reviews.length) {
+      el.innerHTML = '<p style="color:#6c757d">No reviews yet. Be the first!</p>';
+      return;
+    }
+    el.innerHTML = reviews.map(r => `
+      <div style="border-bottom:1px solid #f0f0f0;padding:16px 0">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="width:36px;height:36px;border-radius:50%;background:#1e4fc2;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem">${avatarInitials(r.reviewer?.name)}</div>
+          <div>
+            <div style="font-weight:600;font-size:.9rem">${r.reviewer?.name}</div>
+            <div class="star-rating" style="font-size:.8rem">${renderStars(r.rating)}</div>
+          </div>
+          <div style="margin-left:auto;font-size:.78rem;color:#6c757d">${new Date(r.created_at).toLocaleDateString('en-IN')}</div>
+        </div>
+        ${r.comment ? `<p style="font-size:.88rem;color:#444;line-height:1.6">${r.comment}</p>` : ''}
+      </div>`).join('');
+  } catch {}
+}
+</script>
+</body>
+</html>
